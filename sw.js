@@ -1,11 +1,28 @@
-const C = 'mnemosyne-20261013'; // bump a ogni deploy (con network-first diventa meno critico)
-const EXCLUDE = /fonts\.googleapis|fonts\.gstatic/;
+const C = 'mnemosyne-20261013';
+
 const ASSETS = [
   './',
   './index.html',
-  './js/script.js',
-  './css/master.css',
   './manifest.json',
+  './css/master.css',
+  './js/app.js',
+  './js/browse.js',
+  './js/cards.js',
+  './js/computed.js',
+  './js/constants.js',
+  './js/dashboard.js',
+  './js/decks.js',
+  './js/firebase-sync.js',
+  './js/import-export.js',
+  './js/mnemonic.js',
+  './js/nav.js',
+  './js/pomodoro.js',
+  './js/scheduler.js',
+  './js/state.js',
+  './js/stats.js',
+  './js/study.js',
+  './js/theme.js',
+  './js/ui-utils.js',
 ];
 
 self.addEventListener('install', e => {
@@ -25,7 +42,10 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET' || EXCLUDE.test(e.request.url)) return;
+  const url = new URL(e.request.url);
+  // gestisci solo GET same-origin: Firebase, Google Fonts ecc. passano direttamente
+  if (e.request.method !== 'GET' || url.origin !== location.origin) return;
+
   e.respondWith(
     fetch(e.request)
       .then(res => {
