@@ -1,4 +1,4 @@
-const C = 'mnemosyne-20261013';
+const C = 'mnemosyne-20261013b'; // cambia il nome ad ogni deploy
 
 const ASSETS = [
   './',
@@ -43,11 +43,11 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  // gestisci solo GET same-origin: Firebase, Google Fonts ecc. passano direttamente
+  // solo GET same-origin: Firebase, Google Fonts ecc. passano direttamente
   if (e.request.method !== 'GET' || url.origin !== location.origin) return;
 
   e.respondWith(
-    fetch(e.request)
+    fetch(e.request, { cache: 'no-cache' })
       .then(res => {
         if (res.ok) {
           const copy = res.clone();
