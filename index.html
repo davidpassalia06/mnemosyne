@@ -43,6 +43,7 @@
     <div class="nav-item" onclick="nav('browse')"><i class="bi bi-table nav-ico"></i>Sfoglia carte</div>
     <div class="nav-item" onclick="nav('import')"><i class="bi bi-upload nav-ico"></i>Importa CSV</div>
     <div class="nav-item" onclick="nav('stats')"><i class="bi bi-bar-chart-fill nav-ico"></i>Statistiche</div>
+    <div class="nav-item" onclick="nav('mnemonic')"><i class="bi bi-stars nav-ico"></i>Mnemotecnica</div>
     <div class="nav-item" onclick="nav('settings')"><i class="bi bi-gear-fill nav-ico"></i>Impostazioni</div>
   </div>
   <div class="sb-footer">
@@ -174,6 +175,31 @@
       </div>
     </div>
 
+    <!-- MNEMOTECNICA -->
+    <div class="view" id="view-mnemonic">
+      <div style="max-width:640px">
+        <div class="hero"><h1>Mnemotecnica</h1><p style="color:var(--tx2)">Numero o formula → scomposizione fonetica → frase Paradosso · Azione · Vivido, salvata come carta.</p></div>
+        <div class="frow">
+          <div class="fg" style="flex:1"><label class="fl">Numero o formula</label><input class="fi" id="mn-input" type="text" placeholder="Es. 3,14159 oppure 9.81 m/s²" onkeydown="if(event.key==='Enter')mnGenerate()"></div>
+          <div class="fg"><label class="fl">Raggruppamento</label><select class="fse" id="mn-group-size" style="width:140px"></select></div>
+        </div>
+        <button class="btn btn-p" onclick="mnGenerate()"><i class="bi bi-stars"></i> Scomponi</button>
+        <div id="mn-breakdown"></div>
+        <div id="mn-phrase-wrap" style="display:none;margin-top:20px">
+          <div class="fg">
+            <label class="fl">Frase mnemonica</label>
+            <div style="font-size:12px;color:var(--tx3);margin-bottom:8px;line-height:1.5">Rendila <strong>Paradossale</strong> (assurda), con <strong>Azione</strong> (qualcosa che succede), <strong>Vivida</strong> (colori, suoni, sensazioni).</div>
+            <textarea class="fta" id="mn-phrase" rows="3" placeholder="Scrivi qui la storia che collega le immagini..."></textarea>
+          </div>
+          <div class="fg"><label class="fl">Mazzo di destinazione</label><select class="fse" id="mn-deck-sel"></select></div>
+          <div class="ed-actions">
+            <div class="spacer"></div>
+            <button class="btn btn-p" onclick="mnSaveAsCard()"><i class="bi bi-floppy"></i> Salva come carta</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- IMPOSTAZIONI GENERALI -->
     <div class="view" id="view-settings">
       <div style="max-width:580px">
@@ -186,6 +212,19 @@
             <div><div class="set-label">Colore principale</div><div class="set-desc">Usato per accenti, pulsanti e barre di progresso</div></div>
           </div>
           <div class="theme-swatches" id="theme-swatches"></div>
+        </div>
+
+        <!-- POMODORO -->
+        <div class="set-sec" style="margin-top:24px">
+          <div class="set-sec-title">Timer pomodoro</div>
+          <div class="set-row"><div><div class="set-label">Attiva timer</div><div class="set-desc">Mostra il timer nella barra in alto durante lo studio</div></div><div class="set-ctrl"><input type="checkbox" id="pomo-enabled" onchange="pomoSaveSettings()"></div></div>
+          <div class="set-row"><div><div class="set-label">Avvio automatico</div><div class="set-desc">Parte insieme alla sessione di studio</div></div><div class="set-ctrl"><input type="checkbox" id="pomo-auto" onchange="pomoSaveSettings()"></div></div>
+          <div class="set-row"><div><div class="set-label">Durata blocco (min)</div></div><div class="set-ctrl"><input class="fn" type="number" id="pomo-focus" min="1" max="180" onchange="pomoSaveSettings()"></div></div>
+          <div class="set-row"><div><div class="set-label">Durata pausa (min)</div></div><div class="set-ctrl"><input class="fn" type="number" id="pomo-break" min="1" max="60" onchange="pomoSaveSettings()"></div></div>
+          <div class="flex gap-8 mt-8">
+            <button class="btn btn-g btn-sm" onclick="pomoPreset(25,5)">Classico 25 / 5</button>
+            <button class="btn btn-g btn-sm" onclick="pomoPreset(50,10)">Doppio 50 / 10</button>
+          </div>
         </div>
 
         <!-- FIREBASE -->
@@ -271,7 +310,24 @@
 <!-- Firebase SDK (caricato solo se configurato) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="js/script.js"></script>
+<script src="js/constants.js"></script>
+<script src="js/state.js"></script>
+<script src="js/scheduler.js"></script>
+<script src="js/computed.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/study.js"></script>
+<script src="js/decks.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/browse.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/import-export.js"></script>
+<script src="js/firebase-sync.js"></script>
+<script src="js/ui-utils.js"></script>
+<script src="js/mnemonic.js"></script>
+<script src="js/pomodoro.js"></script>
+<script src="js/app.js"></script>
 <script>
 // ─── Service Worker ───────────────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
