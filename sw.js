@@ -1,15 +1,18 @@
-const C = 'mnemosyne-20261007';
+const C = 'mnemosyne-20261013'; // bump a ogni deploy (con network-first diventa meno critico)
 const EXCLUDE = /fonts\.googleapis|fonts\.gstatic/;
+const ASSETS = [
+  './',
+  './index.html',
+  './js/script.js',
+  './css/master.css',
+  './manifest.json',
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(C).then(c => c.addAll([
-      './',
-      './index.html',
-      './js/script.js',
-      './css/master.css',
-      './manifest.json',
-    ])).then(() => self.skipWaiting())
+    caches.open(C)
+      .then(c => c.addAll(ASSETS.map(u => new Request(u, { cache: 'reload' }))))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -22,15 +25,16 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  if (EXCLUDE.test(e.request.url)) return;
+  if (e.request.method !== 'GET' || EXCLUDE.test(e.request.url)) return;
   e.respondWith(
-    caches.match(e.request).then(r =>
-      r || fetch(e.request).then(res => {
-        return caches.open(C).then(c => {
-          c.put(e.request, res.clone());
-          return res;
-        });
-      }).catch(() => caches.match('./index.html'))
-    )
+    fetch(e.request)
+      .then(res => {
+        if (res.ok) {
+          const copy = res.clone();
+          caches.open(C).then(c => c.put(e.request, copy));
+        }
+        return res;
+      })
+      .catch(() => caches.match(e.request).then(r => r || caches.match('./index.html')))
   );
 });
