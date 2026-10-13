@@ -416,3 +416,22 @@ table.ct tr:last-child td{border-bottom:none}
 .fb-status.ok{background:var(--grdim);border-color:rgba(74,156,110,.25);color:var(--gr)}
 .fb-status.err{background:var(--redim);border-color:rgba(184,92,92,.25);color:var(--re)}
 .fb-status.loading{background:var(--bg3);border-color:var(--bo);color:var(--tx2)}
+
+/* POMODORO */
+.pomo{display:inline-flex;align-items:center;gap:6px;padding:3px 6px 3px 10px;border-radius:20px;background:var(--adim);color:var(--ac);font-size:12px;font-weight:500}
+.pomo.brk{background:var(--grdim);color:var(--gr)}
+.pomo.paused{opacity:.7}
+.pomo-time{font-variant-numeric:tabular-nums;font-weight:600;min-width:2.9em;text-align:center}
+.pomo-btn{background:transparent;border:none;color:inherit;cursor:pointer;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;padding:0}
+.pomo-btn:hover{background:rgba(255,255,255,.1)}
+.set-ctrl input[type=checkbox]{width:18px;height:18px;accent-color:var(--ac);cursor:pointer}
+/* LEGENDA VALUTAZIONE */
+.rate-help{margin-top:10px;font-size:12px;color:var(--tx3)}
+.rate-help summary{cursor:pointer;text-align:center;list-style:none;padding:4px}
+.rate-help summary::-webkit-details-marker{display:none}
+.rate-help summary:hover{color:var(--tx2)}
+.rate-help ul{list-style:none;margin:6px auto 0;max-width:420px;padding:10px 14px;background:var(--bg2);border:1px solid var(--bo);border-radius:var(--r2);line-height:1.7}
+.rate-help b{color:var(--tx2);font-weight:500}
+@media(max-width:640px){.pomo-lbl{display:none}}
+/* A capo nelle carte (risposte su più righe, carte mnemoniche) */
+.card-q,.card-a,.prev-q,.prev-a{white-space:pre-wrap}
