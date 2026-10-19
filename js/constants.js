@@ -1,5 +1,11 @@
 // ═══════════════ COSTANTI ═══════════════
-const SK='mnemosyne_v5',DAY=864e5,MIN=6e4;
+const DAY=864e5,MIN=6e4;
+// Account attivo su questo dispositivo ('' = ospite). Ogni account ha il proprio slot in localStorage,
+// così due account sullo stesso browser non si mescolano. Viene scelto prima che state.js carichi lo stato.
+const ACTIVE_UID_KEY='mnemosyne_active_uid';
+const GUEST_SK='mnemosyne_v5';
+const ACTIVE_UID=(()=>{try{return localStorage.getItem(ACTIVE_UID_KEY)||'';}catch(e){return '';}})();
+const SK=GUEST_SK+(ACTIVE_UID?'_'+ACTIVE_UID:'');
 const SETTINGS_KEY='mnemosyne_settings';
 const COLORS=['#c8a96e','#4a9c6e','#5c8ab8','#b85c5c','#9c6eb8','#c87a3e','#5cb8b0','#7eb85c','#b8a05c'];
 
