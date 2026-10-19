@@ -1,9 +1,15 @@
 // ═══════════════ STUDIO ═══════════════
-// ═══════════════ STUDIO ═══════════════
 // Carte in apprendimento che scadono entro questa finestra tengono aperta la sessione ("in attesa");
 // quelle più lontane (es. passo da 1 giorno) restano salvate e tornano alla prossima sessione.
 const LEARN_AHEAD=20*MIN;
 let rateLock=false; // evita valutazioni doppie durante il breve ritardo prima della carta successiva
+// Carta effettivamente mostrata a schermo. rate/bury/edit agiscono su questa, NON su getCur():
+// nel frattempo una carta in apprendimento può essere scaduta e getCur() ne restituirebbe un'altra.
+let curItem=null;
+function locate(item){
+  let i=againQ.indexOf(item);if(i!==-1)return{fromAgain:true,idx:i};
+  i=studyQ.indexOf(item);return i!==-1?{fromAgain:false,idx:i}:null;
+}
 
 function studyDeck(did){nav('study',{deckId:did});}
 
@@ -74,6 +80,7 @@ function ratingTips(card){
 function renderStudyCard(){
   const wrap=document.getElementById('study-wrap');
   const cur=getCur();
+  curItem=cur?.item||null;
 
   // Stato "in attesa" — tutte le carte main sono finite ma alcune learning non sono ancora scadute
   if(cur?.waiting){
@@ -178,9 +185,9 @@ function rate(rating){
   // Si può valutare solo dopo aver mostrato la risposta (vale anche per le scorciatoie da tastiera)
   const ca=document.getElementById('ca');
   if(!ca||!ca.classList.contains('shown'))return;
-  const cur=getCur();if(!cur||cur.waiting)return;
+  const item=curItem,loc=item&&locate(item);if(!loc)return;
   rateLock=true;
-  const{item,fromAgain,idx}=cur,card=item.card;
+  const{fromAgain,idx}=loc,card=item.card;
   const wasNew=item.phase==='new'||card.status==='new'||card.status==='learning';
 
   // Feedback visivo sul pulsante
@@ -211,7 +218,7 @@ function rate(rating){
   if(upd.isLeech)toast(`Carta sospesa automaticamente (${upd.lapses} errori)`);
 
   // Gestione coda: rimuovi dalla posizione corretta
-  if(fromAgain)againQ.splice(idx,1);else studyQ.shift();
+  if(fromAgain)againQ.splice(idx,1);else studyQ.splice(idx,1);
 
   // Se "Di nuovo" o carta ancora in learning: rimetti in againQ con il nuovo dueDate
   if(rating==='again'||(upd.status==='learning'||upd.status==='relearning')){
@@ -252,19 +259,18 @@ function undoLast(){
 
 function buryCurrent(){
   if(rateLock)return;
-  const cur=getCur();if(!cur||cur.waiting)return;
-  const{item,fromAgain,idx}=cur,card=item.card;
+  const item=curItem,loc=item&&locate(item);if(!loc)return;
+  const{fromAgain,idx}=loc,card=item.card;
   // Sposta la dueDate a domani
   const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);tomorrow.setHours(4,0,0,0);
   card.dueDate=tomorrow.getTime();
   const i=S.cards.findIndex(c=>c.id===card.id);if(i!==-1)S.cards[i].dueDate=card.dueDate;
-  if(fromAgain)againQ.splice(idx,1);else studyQ.shift();
+  if(fromAgain)againQ.splice(idx,1);else studyQ.splice(idx,1);
   save();toast('Carta rimandata a domani.');renderStudyCard();
 }
 
 function editCurrent(){
-  const cur=getCur();if(!cur||cur.waiting)return;
-  const card=cur.item.card;
+  const card=curItem?.card;if(!card)return;
   // Apri l'editor in una nuova tab mantenendo la sessione attiva
   nav('add',{editId:card.id});
 }
