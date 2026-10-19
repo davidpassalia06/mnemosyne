@@ -1,4 +1,4 @@
-const C = 'mnemosyne-20261019a'; // cambia il nome ad ogni deploy
+const C = 'mnemosyne-20261019b'; // cambia il nome ad ogni deploy
 
 const ASSETS = [
   './',
